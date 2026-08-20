@@ -11,6 +11,17 @@ I'm adding the central mast running continuously through all stories with a 2x2 
 
 ![形态](preview/a-exterior.png)
 
+### 实拍截图（页面实际导出的 PNG）
+
+| 截图 | 说明 |
+| --- | --- |
+| [木塔像素剖视_1787234248449.png](screenshots/木塔像素剖视_1787234248449.png) | 实体外观（像素粒度 3×） |
+| [木塔像素剖视_1787234333511.png](screenshots/木塔像素剖视_1787234333511.png) | 半剖透视（剖切面斜切） |
+| [木塔像素剖视_1787234372809.png](screenshots/木塔像素剖视_1787234372809.png) | X 光透视（外壳半透明） |
+| [木塔像素剖视_1787234414954.png](screenshots/木塔像素剖视_1787234414954.png) | 层展爆炸视图 |
+| [50687c15-6198-4ac7-adc7-6c5bbe8845f7.png](screenshots/50687c15-6198-4ac7-adc7-6c5bbe8845f7.png) | 全屏外观抓图（另存） |
+| [a40815a6-3f44-4b1e-a5e1-099860b5b84f.png](screenshots/a40815a6-3f44-4b1e-a5e1-099860b5b84f.png) | 全屏透视抓图（另存） |
+
 ---
 
 ## 一、打开方式
