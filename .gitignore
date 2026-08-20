@@ -1,0 +1,11 @@
+# 系统杂项
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# 编辑器
+*.swp
+.idea/
+.vscode/
+
+# 本地产物（可由 tools/ 重新生成；preview/*.png 仍提交以便 README 展示）

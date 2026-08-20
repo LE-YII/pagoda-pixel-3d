@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>释迦木塔 · 像素体素 3D 剖视（中国古代楼阁式木塔）</title>
+<style>
+  :root{
+    --ink:#14110d; --ink2:#1e1a15; --paper:#e8dcc0; --paper2:#cbbd9c;
+    --gold:#d8a63b; --gold2:#f3d275; --red:#a63a2a; --red2:#c9553c;
+    --jade:#4d8f74; --line:rgba(216,166,59,.28);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;background:#0c0a08;
+    font-family:"Kaiti SC","KaiTi","STKaiti","Songti SC","Noto Serif CJK SC",serif;color:var(--paper)}
+  #gl{position:fixed;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}
+  .no{position:fixed;inset:0;display:none;place-items:center;text-align:center;padding:24px;font-size:15px;line-height:2}
+
+  /* ---------- 面板 ---------- */
+  #ui{position:fixed;top:0;left:0;height:100%;width:286px;padding:12px 12px 76px;overflow-y:auto;
+    background:linear-gradient(180deg,rgba(14,12,9,.94),rgba(20,17,13,.9));
+    border-right:1px solid var(--line);backdrop-filter:blur(3px);transition:transform .28s ease;z-index:9}
+  #ui.hide{transform:translateX(-100%)}
+  #ui::-webkit-scrollbar{width:6px}#ui::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+  h1{margin:2px 0 2px;font-size:19px;letter-spacing:3px;color:var(--gold2);font-weight:400}
+  h1 small{display:block;font-size:11px;letter-spacing:1px;color:var(--paper2);margin-top:4px;font-family:system-ui,sans-serif}
+  .grp{margin:12px 0 0;border:1px solid var(--line);border-radius:5px;background:rgba(0,0,0,.22)}
+  .grp>b{display:block;padding:6px 9px;font-size:12px;font-weight:400;letter-spacing:2px;color:var(--gold);
+    border-bottom:1px solid var(--line);background:rgba(216,166,59,.06)}
+  .grp>div{padding:8px 9px}
+  .seg{display:flex;flex-wrap:wrap;gap:4px}
+  .seg button{flex:1 1 auto;min-width:56px;padding:6px 4px;font-size:12px;cursor:pointer;
+    background:rgba(232,220,192,.06);color:var(--paper);border:1px solid var(--line);border-radius:4px;
+    font-family:inherit;letter-spacing:1px;transition:.15s}
+  .seg button:hover{background:rgba(216,166,59,.18)}
+  .seg button.on{background:linear-gradient(180deg,var(--red2),var(--red));border-color:var(--gold);color:#fff8e6}
+  .btn{flex:1;padding:6px 4px;font-size:12px;cursor:pointer;background:rgba(232,220,192,.06);color:var(--paper);
+    border:1px solid var(--line);border-radius:4px;font-family:inherit;letter-spacing:1px;transition:.15s}
+  .btn:hover{background:rgba(216,166,59,.18)}
+  .row{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px;color:var(--paper2)}
+  .row span{flex:0 0 62px}
+  .row input[type=range]{flex:1;height:3px;-webkit-appearance:none;appearance:none;background:var(--line);border-radius:2px}
+  .row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+    background:var(--gold);border:1px solid #6b4c12;cursor:pointer}
+  .row em{flex:0 0 34px;text-align:right;font-style:normal;color:var(--gold2);font-family:ui-monospace,monospace}
+  .chk{display:grid;grid-template-columns:1fr 1fr;gap:2px 6px}
+  .chk label{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;color:var(--paper2);padding:2px 0}
+  .chk input{accent-color:var(--red2);width:13px;height:13px}
+  .sw{display:inline-block;width:9px;height:9px;border-radius:2px;border:1px solid rgba(0,0,0,.5)}
+  .tip{font-size:11px;line-height:1.85;color:#9c9482;font-family:system-ui,sans-serif}
+  #toggle{position:fixed;top:10px;left:296px;z-index:10;width:34px;height:34px;border-radius:5px;cursor:pointer;
+    background:rgba(14,12,9,.86);border:1px solid var(--line);color:var(--gold);font-size:17px;transition:left .28s ease}
+  #ui.hide + #toggle{left:10px}
+
+  /* ---------- 右上信息 ---------- */
+  #hud{position:fixed;top:10px;right:10px;z-index:8;text-align:right;pointer-events:none}
+  #hud .t{font-size:16px;letter-spacing:4px;color:var(--gold2);text-shadow:0 2px 6px #000}
+  #hud .s{font-size:11px;color:var(--paper2);font-family:ui-monospace,monospace;margin-top:4px;opacity:.85}
+  #lv{position:fixed;right:10px;bottom:10px;z-index:8;text-align:right;font-size:12px;color:var(--paper2);
+    background:rgba(14,12,9,.7);border:1px solid var(--line);border-radius:5px;padding:7px 10px;max-width:250px;line-height:1.8}
+  #lv b{color:var(--gold2);font-weight:400}
+  #labels{position:fixed;inset:0;z-index:7;pointer-events:none;overflow:hidden}
+  #labels div{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-size:11px;padding:2px 6px;
+    background:rgba(12,10,8,.78);border:1px solid var(--line);border-radius:3px;color:var(--gold2);
+    box-shadow:0 1px 6px rgba(0,0,0,.5)}
+  #labels div::after{content:"";position:absolute;left:-5px;top:50%;width:4px;height:4px;background:var(--gold);border-radius:50%}
+  @media (max-width:820px){
+    #ui{width:250px}#toggle{left:260px}#hud .t{font-size:13px}#lv{display:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div class="no" id="fallback">此页面需要 <b>WebGL2</b> 支持。<br>请使用较新的 Chrome / Edge / Firefox / Safari 打开。</div>
+
+<div id="labels"></div>
+
+<div id="hud">
+  <div class="t">佛宫寺 · 释迦木塔</div>
+  <div class="s" id="stat">—</div>
+</div>
+
+<div id="lv">
+  <b id="lvname">全塔通览</b>
+  <div id="lvinfo"></div>
+</div>
+
+<aside id="ui">
+  <h1>楼阁式木塔 · 剖视<small>五层六檐 · 明五暗四 · 塔心柱贯通 · 像素体素建模</small></h1>
+
+  <div class="grp"><b>透 视 方 式</b><div>
+    <div class="seg" id="mode">
+      <button data-m="solid" class="on">实体</button>
+      <button data-m="xray">X 光</button>
+      <button data-m="cut">半剖</button>
+      <button data-m="explode">层展</button>
+    </div>
+    <div class="row" id="r-cutA"><span>剖面转角</span><input type="range" id="cutA" min="0" max="360" value="45"><em id="v-cutA">45°</em></div>
+    <div class="row" id="r-cutD"><span>剖面进深</span><input type="range" id="cutD" min="-40" max="40" value="0"><em id="v-cutD">0</em></div>
+    <div class="row" id="r-cutIn"><span>剖及内构</span>
+      <input type="checkbox" id="cutIn" style="flex:0 0 auto;width:14px;height:14px;accent-color:#c9553c">
+      <em style="flex:1;text-align:left;font-size:11px;color:#9c9482">连楼板梁架一起剖开</em></div>
+    <div class="row" id="r-xray"><span>外壳透明</span><input type="range" id="xray" min="4" max="70" value="16"><em id="v-xray">16%</em></div>
+    <div class="row" id="r-exp"><span>层间抬升</span><input type="range" id="exp" min="0" max="60" value="18"><em id="v-exp">18</em></div>
+  </div></div>
+
+  <div class="grp"><b>楼 层 聚 焦</b><div>
+    <div class="seg" id="lvsel">
+      <button data-l="-1" class="on">全塔</button>
+      <button data-l="0">一层</button><button data-l="1">二层</button>
+      <button data-l="2">三层</button><button data-l="3">四层</button><button data-l="4">五层</button>
+    </div>
+    <div class="row" style="margin-top:9px"><span>视点</span>
+      <button class="btn" id="inside">进入塔内</button>
+      <button class="btn" id="outside">退回塔外</button>
+    </div>
+  </div></div>
+
+  <div class="grp"><b>构 件 显 隐（图例）</b><div class="chk" id="kinds"></div></div>
+
+  <div class="grp"><b>画 面 与 视 角</b><div>
+    <div class="row"><span>像素粒度</span><input type="range" id="px" min="1" max="6" value="3"><em id="v-px">3×</em></div>
+    <div class="row"><span>描边强度</span><input type="range" id="edge" min="0" max="100" value="70"><em id="v-edge">70%</em></div>
+    <div class="row"><span>勾轮廓线</span><input type="range" id="out" min="0" max="100" value="62"><em id="v-out">62%</em></div>
+    <div class="row"><span>昼夜</span><input type="range" id="night" min="0" max="100" value="0"><em id="v-night">昼</em></div>
+    <div class="seg" style="margin-top:8px">
+      <button id="spin" class="on">自动环绕</button>
+      <button id="shot">存为 PNG</button>
+      <button id="reset">复位视角</button>
+    </div>
+    <div class="row" style="margin-top:8px"><span>构件标注</span>
+      <input type="checkbox" id="anno" style="flex:0 0 auto;width:14px;height:14px;accent-color:#c9553c">
+      <em style="flex:1;text-align:left;font-size:11px;color:#9c9482">标出主要构件名称</em></div>
+  </div></div>
+
+  <div class="grp"><b>操 作 提 示</b><div class="tip">
+    左键拖动＝环绕　滚轮＝远近<br>
+    右键 / Shift 拖动＝平移　双指＝缩放<br>
+    <b style="color:#d8a63b">1 2 3 4</b> 切换透视　<b style="color:#d8a63b">0</b> 复位<br>
+    <b style="color:#d8a63b">Q</b> 屋顶显隐　<b style="color:#d8a63b">W</b> 墙体显隐　<b style="color:#d8a63b">空格</b> 自动环绕
+  </div></div>
+
+  <div class="grp"><b>形 制 说 明</b><div class="tip">
+    仿辽代楼阁式木塔：须弥座台基之上立五层塔身，每层<b style="color:#e8dcc0">檐柱—阑额—普拍枋—斗拱</b>层层叠垒，
+    出檐深远、翼角起翘，檐上设<b style="color:#e8dcc0">平座勾栏</b>可绕塔环行。内部为
+    <b style="color:#e8dcc0">内槽 / 外槽</b>双层柱网，楼板架于楞木之上，<b style="color:#e8dcc0">木楼梯</b>置于外槽走道并逐层转向，
+    <b style="color:#e8dcc0">塔心柱</b>自地面贯通至塔刹。一层佛坛置释迦坐像，上层设佛龛、经柜与经案。
+  </div></div>
+</aside>
+<button id="toggle" title="收起/展开面板">☰</button>
+
+<script src="pagoda-model.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
